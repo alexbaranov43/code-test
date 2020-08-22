@@ -36,7 +36,7 @@ class CreateProductsTable extends Migration
     public function down()
     {
 
-        Schema::table('content_scenario_note_responses', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table) {
             $table->dropForeign('products_user_id_foreign');
         });
 
