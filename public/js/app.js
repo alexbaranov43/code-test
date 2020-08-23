@@ -2107,11 +2107,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       errors: {},
-      products: {}
+      products: {},
+      productsInfo: {}
     };
   },
   mounted: function mounted() {
@@ -2124,6 +2126,7 @@ __webpack_require__.r(__webpack_exports__);
       var url = '/products/index';
       axios.get(url).then(function (response) {
         _this.products = response.data;
+        _this.productsInfo = response.data.data;
       })["catch"](function (error) {
         _this.loaded = true;
 
@@ -38649,27 +38652,30 @@ var render = function() {
       _c(
         "div",
         { staticClass: "col-md-12 row justify-content-center" },
-        _vm._l(_vm.products, function(product) {
-          return _c(
-            "div",
-            {
-              key: product.id,
-              staticClass: "card col-md-5 justify-content-center"
-            },
-            [
-              _c("img", { attrs: { src: product.image } }),
-              _vm._v(" "),
-              _c("h1", { attrs: { src: product.name } }),
-              _vm._v(" "),
-              _c("p", { attrs: { src: product.description } }),
-              _vm._v(" "),
-              _c("p", { attrs: { src: product.price } }),
-              _vm._v(" "),
-              _c("p", { attrs: { src: product.user_name } })
-            ]
-          )
-        }),
-        0
+        [
+          _vm._v("\n    " + _vm._s(_vm.products) + "\n    "),
+          _vm._l(_vm.productsInfo, function(product) {
+            return _c(
+              "div",
+              {
+                key: product.id,
+                staticClass: "card col-md-5 justify-content-center"
+              },
+              [
+                _c("img", { attrs: { src: product.image } }),
+                _vm._v(" "),
+                _c("h1", [_vm._v(_vm._s(product.name))]),
+                _vm._v(" "),
+                _c("p", [_vm._v(_vm._s(product.description))]),
+                _vm._v(" "),
+                _c("p", [_vm._v("$" + _vm._s(product.price))]),
+                _vm._v(" "),
+                _c("p", [_vm._v("Posted By: " + _vm._s(product.user_name))])
+              ]
+            )
+          })
+        ],
+        2
       )
     ],
     1

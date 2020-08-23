@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Product;
@@ -18,13 +19,10 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $products = Product::select('products.*', 'users.first_name as first_name', 'users.last_name as last_name')
+        $products = Product::select('products.*', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"))
         ->join('users', 'users.id', '=', 'products.user_id')
         ->get();
 
-        foreach ($products as $product) {
-            $product->user_name = $product->first_name . ' ' . $product->last_name;
-        }
         return new ProductResourceCollection($products);
 
     }
