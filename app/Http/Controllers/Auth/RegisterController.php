@@ -65,11 +65,16 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // dd($data['is_subscribed']);
+        if (!isset($data['is_subscribed'])) {
+            $is_subscribed = 0;
+        } else {
+            $is_subscribed = 1;
+        }
+
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
-            'is_subscribed' => $data['is_subscribed'],
+            'is_subscribed' => $is_subscribed,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);

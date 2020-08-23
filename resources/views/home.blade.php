@@ -16,7 +16,9 @@
 
                     Welcome {{Auth::user()->first_name}} {{Auth::user()->last_name}}
                     <br><br>
+                    @if (Auth::user()->is_subscribed)
                     <button class="btn btn-info" onclick="showForm()">Post A Product</button>
+                    @endif
                     <div id="post-product" style="display: none">
                     <post-product-component :user_id="{{Auth::user()->id}}"></post-product-component>
                     </div>
