@@ -18,6 +18,15 @@ class ProductController extends Controller
     public function index()
     {
         //
+        $products = Product::select('products.*', 'users.first_name as first_name', 'users.last_name as last_name')
+        ->join('users', 'users.id', '=', 'products.user_id')
+        ->get();
+
+        foreach ($products as $product) {
+            $product->user_name = $product->first_name . ' ' . $product->last_name;
+        }
+        return new ProductResourceCollection($products);
+
     }
 
     /**
@@ -53,7 +62,8 @@ class ProductController extends Controller
         ]);
 
         $product->save();
-
+        
+        $product->user_name = Auth::user()->first_name . ' ' . Auth::user()->last_name;
         return new ProductResource($product);
     }
 

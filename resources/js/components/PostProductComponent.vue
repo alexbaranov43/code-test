@@ -25,7 +25,7 @@
               <!-- Price Text Input -->
               <textarea class="form-control col-md-2" id="price" name="price" v-model="fields.price" rows="1" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Post Product</button>
+          <button type="submit" class="btn btn-primary">Submit Product</button>
       </form>
   </div>
 </template>

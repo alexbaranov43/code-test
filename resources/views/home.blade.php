@@ -18,9 +18,13 @@
                     <br><br>
                     @if (Auth::user()->is_subscribed)
                     <button class="btn btn-info" onclick="showForm()">Post A Product</button>
+                    <button class="btn btn-success" id="view-products" onclick="showProducts()" style="display: none">View Products</button>
                     @endif
                     <div id="post-product" style="display: none">
                     <post-product-component :user_id="{{Auth::user()->id}}"></post-product-component>
+                    </div>
+                    <div>
+                        <product-list-component></product-list-component>
                     </div>
 
                 </div>
@@ -41,10 +45,13 @@ $.ajaxSetup({
 
 function showForm() {
   var postProduct = document.getElementById("post-product");
+  var viewProducts = document.getElementById("view-products");
   if (postProduct.style.display === "none") {
     postProduct.style.display = "block";
+    // viewProducts.style.display = "none";
   } else {
     postProduct.style.display = "none";
+    // viewProducts.style.display = "block";
   }
 }
 
