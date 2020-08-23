@@ -19,7 +19,7 @@
 
               <label for="image">Image</label>
               <!-- Image Text Input -->
-              <textarea class="form-control" id="image" name="image" v-model="fields.image" rows="1" required></textarea>
+              <textarea class="form-control" id="image" name="image" v-model="fields.image" rows="1"></textarea>
                             
               <label for="price">Price</label>
               <!-- Price Text Input -->

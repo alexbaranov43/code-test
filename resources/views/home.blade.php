@@ -17,14 +17,16 @@
                     Welcome {{Auth::user()->first_name}} {{Auth::user()->last_name}}
                     <br><br>
                     @if (Auth::user()->is_subscribed)
-                    <button class="btn btn-info" onclick="showForm()">Post A Product</button>
-                    <button class="btn btn-success" id="view-products" onclick="showProducts()" style="display: none">View Products</button>
+                    <div style="padding-bottom: 20px">
+                        <button class="btn btn-info" onclick="showForm()">Post A Product</button>
+                        <button class="btn btn-success" id="view-products" onclick="showProducts()" style="display: none">View Products</button>
+                    </div>
                     @endif
-                    <div id="post-product" style="display: none">
+                    <div id="post-product" style="display: none;">
                     <post-product-component :user_id="{{Auth::user()->id}}"></post-product-component>
                     </div>
-                    <div>
-                        <product-list-component></product-list-component>
+                    <div id="product-list">
+                    <product-list-component></product-list-component>
                     </div>
 
                 </div>
@@ -45,13 +47,13 @@ $.ajaxSetup({
 
 function showForm() {
   var postProduct = document.getElementById("post-product");
-  var viewProducts = document.getElementById("view-products");
+  var viewProducts = document.getElementById("product-list");
   if (postProduct.style.display === "none") {
     postProduct.style.display = "block";
-    // viewProducts.style.display = "none";
+    viewProducts.style.display = "none";
   } else {
     postProduct.style.display = "none";
-    // viewProducts.style.display = "block";
+    viewProducts.style.display = "block";
   }
 }
 

@@ -2108,12 +2108,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       errors: {},
       products: {},
-      productsInfo: {}
+      productsInfo: {},
+      fullIndex: true
     };
   },
   mounted: function mounted() {
@@ -2125,6 +2128,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var url = '/products/index';
       axios.get(url).then(function (response) {
+        _this.fullIndex = true;
         _this.products = response.data;
         _this.productsInfo = response.data.data;
       })["catch"](function (error) {
@@ -2134,6 +2138,44 @@ __webpack_require__.r(__webpack_exports__);
           // flash message failure
           flash('Error in loading products', 'failure');
           _this.errors = error.response.data.errors || {};
+        }
+      });
+    },
+    getPersonalProducts: function getPersonalProducts() {
+      var _this2 = this;
+
+      var url = '/products/index/personal';
+      axios.get(url).then(function (response) {
+        _this2.products = response.data;
+        _this2.productsInfo = response.data.data;
+        _this2.fullIndex = false;
+      })["catch"](function (error) {
+        _this2.loaded = true;
+
+        if (error.response.status === 422) {
+          // flash message failure
+          flash('Error in loading products', 'failure');
+          _this2.errors = error.response.data.errors || {};
+        }
+      });
+    },
+    deleteProduct: function deleteProduct(product_id) {
+      var _this3 = this;
+
+      var url = "products/".concat(product_id, "/destroy");
+      axios["delete"](url).then(function (response) {
+        if (_this3.fullIndex) {
+          _this3.getProducts();
+        } else {
+          _this3.getPersonalProducts();
+        }
+      })["catch"](function (error) {
+        _this3.loaded = true;
+
+        if (error.response.status === 422) {
+          // flash message failure
+          flash('Error in loading products', 'failure');
+          _this3.errors = error.response.data.errors || {};
         }
       });
     }
@@ -38573,7 +38615,7 @@ var render = function() {
                 }
               ],
               staticClass: "form-control",
-              attrs: { id: "image", name: "image", rows: "1", required: "" },
+              attrs: { id: "image", name: "image", rows: "1" },
               domProps: { value: _vm.fields.image },
               on: {
                 input: function($event) {
@@ -38647,35 +38689,75 @@ var render = function() {
     "div",
     { staticClass: "container" },
     [
+      this.fullIndex
+        ? _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.getPersonalProducts()
+                }
+              }
+            },
+            [_vm._v("See Personal Products")]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      this.fullIndex == false
+        ? _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.getProducts()
+                }
+              }
+            },
+            [_vm._v("See All Products")]
+          )
+        : _vm._e(),
+      _vm._v(" "),
       _c("flash", { attrs: { message: "" } }),
       _vm._v(" "),
       _c(
         "div",
         { staticClass: "col-md-12 row justify-content-center" },
-        [
-          _vm._v("\n    " + _vm._s(_vm.products) + "\n    "),
-          _vm._l(_vm.productsInfo, function(product) {
-            return _c(
-              "div",
-              {
-                key: product.id,
-                staticClass: "card col-md-5 justify-content-center"
-              },
-              [
-                _c("img", { attrs: { src: product.image } }),
-                _vm._v(" "),
-                _c("h1", [_vm._v(_vm._s(product.name))]),
-                _vm._v(" "),
-                _c("p", [_vm._v(_vm._s(product.description))]),
-                _vm._v(" "),
-                _c("p", [_vm._v("$" + _vm._s(product.price))]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Posted By: " + _vm._s(product.user_name))])
-              ]
-            )
-          })
-        ],
-        2
+        _vm._l(_vm.productsInfo, function(product) {
+          return _c(
+            "div",
+            {
+              key: product.id,
+              staticClass: "card col-md-5 justify-content-center"
+            },
+            [
+              _c("img", { attrs: { src: product.image } }),
+              _vm._v(" "),
+              _c("h1", [_vm._v(_vm._s(product.name))]),
+              _vm._v(" "),
+              _c("p", [_vm._v(_vm._s(product.description))]),
+              _vm._v(" "),
+              _c("p", [_vm._v("$" + _vm._s(product.price))]),
+              _vm._v(" "),
+              _c("p", [_vm._v("Posted By: " + _vm._s(product.user_name))]),
+              _vm._v(" "),
+              product.can_edit
+                ? _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      on: {
+                        click: function($event) {
+                          return _vm.deleteProduct(product.id)
+                        }
+                      }
+                    },
+                    [_vm._v("Delete")]
+                  )
+                : _vm._e()
+            ]
+          )
+        }),
+        0
       )
     ],
     1
