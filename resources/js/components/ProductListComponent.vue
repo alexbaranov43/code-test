@@ -13,6 +13,7 @@
         <p>{{product.description}}</p>
         <p>${{product.price}}</p>
         <p>Posted By: {{product.user_name}}</p>
+        <p v-if="!product.is_available">TAKEN!</p>
         <button v-if="product.is_available && !product.can_edit" type="button" class="btn btn-success" @click="takeProduct(product.id)">Take</button>
         <button v-if="product.can_edit" type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#modal' + product.id">Update</button>
         <button v-if="product.can_edit" class="btn btn-danger" @click="deleteProduct(product.id)">Delete</button>

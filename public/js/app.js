@@ -2155,6 +2155,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -38910,6 +38911,8 @@ var render = function() {
               _c("p", [_vm._v("$" + _vm._s(product.price))]),
               _vm._v(" "),
               _c("p", [_vm._v("Posted By: " + _vm._s(product.user_name))]),
+              _vm._v(" "),
+              !product.is_available ? _c("p", [_vm._v("TAKEN!")]) : _vm._e(),
               _vm._v(" "),
               product.is_available && !product.can_edit
                 ? _c(
