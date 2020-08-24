@@ -38913,7 +38913,10 @@ var render = function() {
               staticClass: "card col-md-5 justify-content-center"
             },
             [
-              _c("img", { attrs: { src: product.image } }),
+              _c("img", {
+                staticStyle: { width: "100%" },
+                attrs: { src: product.image }
+              }),
               _vm._v(" "),
               _c("h1", [_vm._v(_vm._s(product.name))]),
               _vm._v(" "),

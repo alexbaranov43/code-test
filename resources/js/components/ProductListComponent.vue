@@ -10,7 +10,7 @@
     <div class="col-md-12 row justify-content-center">
       <div class="card col-md-5 justify-content-center" v-for="product in productsInfo"  v-bind:key="product.id">
         
-        <img v-bind:src="product.image">
+        <img v-bind:src="product.image" style="width: 100%">
         <h1>{{product.name}}</h1>
         <p>{{product.description}}</p>
         <p>${{product.price}}</p>

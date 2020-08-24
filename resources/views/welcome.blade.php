@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Hello. Post Your Products Here <br> Enter.
+                    Hello. <br> Post Your Products Here and Take What You Want.
                 </div>
             </div>
         </div>
