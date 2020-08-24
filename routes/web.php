@@ -23,7 +23,9 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('products/index', 'API\ProductController@index');
+Route::get('products/{product}/edit', 'API\ProductController@edit')->where('product', '[0-9]+');
 Route::get('products/index/personal', 'API\ProductController@personalIndex');
 Route::get('products/index/personal', 'API\ProductController@personalIndex');
+Route::patch('products/{product}/update', 'API\ProductController@update')->where('product', '[0-9]+');
 Route::post('products/post', 'API\ProductController@store');
 Route::delete('products/{product}/destroy', 'API\ProductController@destroy')->where('product', '[0-9]+');

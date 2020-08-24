@@ -2055,7 +2055,6 @@ __webpack_require__.r(__webpack_exports__);
       if (this.loaded) {
         //set the user id to the passed attribute
         this.fields.user_id = this.$attrs.user_id;
-        console.log(this.$attrs.user_id);
         this.loaded = false;
         this.success = false;
         this.errors = {};
@@ -2110,10 +2109,57 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      fields: {},
       errors: {},
+      productInfo: {},
+      success: false,
+      loaded: true,
       products: {},
       productsInfo: {},
       fullIndex: true
@@ -2121,6 +2167,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     products: {}
+
+    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   },
   methods: {
     getProducts: function getProducts() {
@@ -2159,23 +2207,63 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    deleteProduct: function deleteProduct(product_id) {
+    updateProduct: function updateProduct(product_id) {
       var _this3 = this;
+
+      console.log(this.productInfo);
+
+      if (this.loaded) {
+        // console.log(product.user_id)
+        // this.productInfo.user_id = product.user_id
+        this.loaded = false;
+        this.success = false; // set the user id to the passed attribute
+
+        this.loaded = false;
+        this.success = false;
+        this.errors = {};
+        axios.patch("/products/".concat(product_id, "/update"), this.productInfo).then(function (response) {
+          console.log(response); // this.fields = {}; //Clear input fields.
+
+          _this3.loaded = true;
+          _this3.success = true;
+
+          if (_this3.fullIndex) {
+            _this3.getProducts();
+          } else {
+            _this3.getPersonalProducts();
+          } // Flash message success
+
+
+          flash('Product updated successfully.', 'success');
+        })["catch"](function (error) {
+          console.log(error);
+          _this3.loaded = true;
+
+          if (error.response.status === 422) {
+            // flash message failure
+            flash('Error in updating your product', 'failure');
+            _this3.errors = error.response.data.errors || {};
+          }
+        });
+      }
+    },
+    deleteProduct: function deleteProduct(product_id) {
+      var _this4 = this;
 
       var url = "products/".concat(product_id, "/destroy");
       axios["delete"](url).then(function (response) {
-        if (_this3.fullIndex) {
-          _this3.getProducts();
+        if (_this4.fullIndex) {
+          _this4.getProducts();
         } else {
-          _this3.getPersonalProducts();
+          _this4.getPersonalProducts();
         }
       })["catch"](function (error) {
-        _this3.loaded = true;
+        _this4.loaded = true;
 
         if (error.response.status === 422) {
           // flash message failure
           flash('Error in loading products', 'failure');
-          _this3.errors = error.response.data.errors || {};
+          _this4.errors = error.response.data.errors || {};
         }
       });
     }
@@ -38744,6 +38832,21 @@ var render = function() {
                 ? _c(
                     "button",
                     {
+                      staticClass: "btn btn-primary",
+                      attrs: {
+                        type: "button",
+                        "data-toggle": "modal",
+                        "data-target": "#modal" + product.id
+                      }
+                    },
+                    [_vm._v("Update")]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              product.can_edit
+                ? _c(
+                    "button",
+                    {
                       staticClass: "btn btn-danger",
                       on: {
                         click: function($event) {
@@ -38753,7 +38856,251 @@ var render = function() {
                     },
                     [_vm._v("Delete")]
                   )
-                : _vm._e()
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass: "modal fade",
+                  attrs: {
+                    id: "modal" + product.id,
+                    tabindex: "-1",
+                    role: "dialog",
+                    "aria-labelledby": "exampleModalLabel",
+                    "aria-hidden": "true"
+                  }
+                },
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "modal-dialog",
+                      attrs: { role: "document" }
+                    },
+                    [
+                      _c("div", { staticClass: "modal-content" }, [
+                        _c("div", { staticClass: "modal-header" }, [
+                          _c(
+                            "h5",
+                            {
+                              staticClass: "modal-title",
+                              attrs: { id: "exampleModalLabel" }
+                            },
+                            [_vm._v("Update: " + _vm._s(product.name))]
+                          ),
+                          _vm._v(" "),
+                          _vm._m(0, true)
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "container" }, [
+                          _c(
+                            "form",
+                            {
+                              attrs: { method: "PATCH" },
+                              on: {
+                                submit: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.updateProduct(product.id)
+                                }
+                              }
+                            },
+                            [
+                              _c("div", { staticClass: "form-group" }, [
+                                _c("label", { attrs: { for: "name" } }, [
+                                  _vm._v("Name")
+                                ]),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.productInfo.user_id,
+                                      expression: "productInfo.user_id"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    type: "hidden",
+                                    id: "user_id",
+                                    name: "user_id",
+                                    rows: "5"
+                                  },
+                                  domProps: { value: _vm.productInfo.user_id },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.productInfo,
+                                        "user_id",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("textarea", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.productInfo.name,
+                                      expression: "productInfo.name"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    id: "name",
+                                    name: "name",
+                                    placeholder: product.name,
+                                    rows: "1",
+                                    required: ""
+                                  },
+                                  domProps: { value: _vm.productInfo.name },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.productInfo,
+                                        "name",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("label", { attrs: { for: "description" } }, [
+                                  _vm._v("Description")
+                                ]),
+                                _vm._v(" "),
+                                _c("textarea", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.productInfo.description,
+                                      expression: "productInfo.description"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    id: "description",
+                                    name: "description",
+                                    placeholder: product.description,
+                                    rows: "5",
+                                    required: ""
+                                  },
+                                  domProps: {
+                                    value: _vm.productInfo.description
+                                  },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.productInfo,
+                                        "description",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("label", { attrs: { for: "image" } }, [
+                                  _vm._v("Image")
+                                ]),
+                                _vm._v(" "),
+                                _c("textarea", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.productInfo.image,
+                                      expression: "productInfo.image"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    id: "image",
+                                    name: "image",
+                                    placeholder: product.image,
+                                    rows: "1"
+                                  },
+                                  domProps: { value: _vm.productInfo.image },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.productInfo,
+                                        "image",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("label", { attrs: { for: "price" } }, [
+                                  _vm._v("Price")
+                                ]),
+                                _vm._v(" "),
+                                _c("textarea", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.productInfo.price,
+                                      expression: "productInfo.price"
+                                    }
+                                  ],
+                                  staticClass: "form-control col-md-2",
+                                  attrs: {
+                                    id: "price",
+                                    name: "price",
+                                    placeholder: product.price,
+                                    rows: "1",
+                                    required: ""
+                                  },
+                                  domProps: { value: _vm.productInfo.price },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.productInfo,
+                                        "price",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary",
+                                  attrs: { type: "submit" }
+                                },
+                                [_vm._v("Update Product")]
+                              )
+                            ]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _vm._m(1, true)
+                      ])
+                    ]
+                  )
+                ]
+              )
             ]
           )
         }),
@@ -38763,7 +39110,40 @@ var render = function() {
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 

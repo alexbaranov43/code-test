@@ -59,7 +59,6 @@ export default {
       if (this.loaded) {
         //set the user id to the passed attribute
         this.fields.user_id = this.$attrs.user_id
-        console.log(this.$attrs.user_id)
         this.loaded = false;
         this.success = false;
         this.errors = {};
