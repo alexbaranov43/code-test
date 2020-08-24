@@ -2152,6 +2152,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2162,7 +2164,7 @@ __webpack_require__.r(__webpack_exports__);
       loaded: true,
       products: {},
       productsInfo: {},
-      fullIndex: true,
+      fullIndex: false,
       renderComponent: true
     };
   },
@@ -2293,9 +2295,7 @@ __webpack_require__.r(__webpack_exports__);
       }, 10000);
     }
   },
-  created: function created() {
-    this.getProducts();
-  }
+  created: function created() {}
 });
 
 /***/ }),
@@ -38802,35 +38802,57 @@ var render = function() {
     "div",
     { staticClass: "container" },
     [
-      this.fullIndex
-        ? _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              on: {
-                click: function($event) {
-                  return _vm.getPersonalProducts()
-                }
-              }
-            },
-            [_vm._v("See Personal Products")]
-          )
-        : _vm._e(),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-info",
+          on: {
+            click: function($event) {
+              return _vm.getPersonalProducts()
+            }
+          }
+        },
+        [_vm._v("See Personal Products")]
+      ),
       _vm._v(" "),
-      this.fullIndex == false
-        ? _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              on: {
-                click: function($event) {
-                  return _vm.getProducts()
-                }
-              }
-            },
-            [_vm._v("See All Products")]
-          )
-        : _vm._e(),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-info",
+          on: {
+            click: function($event) {
+              return _vm.getProducts()
+            }
+          }
+        },
+        [_vm._v("See All Products")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-info",
+          on: {
+            click: function($event) {
+              return _vm.getAvailableProducts()
+            }
+          }
+        },
+        [_vm._v("See Available Products")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-info",
+          on: {
+            click: function($event) {
+              return _vm.getTakenProducts()
+            }
+          }
+        },
+        [_vm._v("See Products I've Taken")]
+      ),
       _vm._v(" "),
       _c("flash", { attrs: { message: "" } }),
       _vm._v(" "),

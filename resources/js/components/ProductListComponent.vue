@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <button class="btn btn-info" v-if="this.fullIndex" @click="getPersonalProducts()">See Personal Products</button>
-    <button class="btn btn-info" v-if="this.fullIndex == false" @click="getProducts()">See All Products</button>
+    <button class="btn btn-info" @click="getPersonalProducts()">See Personal Products</button>
+    <button class="btn btn-info" @click="getProducts()">See All Products</button>
+    <button class="btn btn-info" @click="getAvailableProducts()">See Available Products</button>
+    <button class="btn btn-info" @click="getTakenProducts()">See Products I've Taken</button>
     <flash message=""></flash>
     <div class="col-md-12 row justify-content-center">
       <div class="card col-md-5 justify-content-center" v-for="product in productsInfo"  v-bind:key="product.id">
@@ -71,7 +73,7 @@ export default {
       loaded: true,
       products: {},
       productsInfo: {},
-      fullIndex: true,
+      fullIndex: false,
       renderComponent: true,
         }
       },
@@ -185,7 +187,6 @@ export default {
       },
   },
   created() {
-    this.getProducts();
   }
 }
 </script>
