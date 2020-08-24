@@ -1,9 +1,11 @@
 <template>
   <div class="container">
-    <button class="btn btn-info" @click="getPersonalProducts()">See Personal Products</button>
-    <button class="btn btn-info" @click="getProducts()">See All Products</button>
-    <button class="btn btn-info" @click="getAvailableProducts()">See Available Products</button>
-    <button class="btn btn-info" @click="getProductsTakenByMe()">See Products I've Taken</button>
+    <div class="col-md-12 row justify-content-left" style="padding-bottom: 15px">
+      <button class="btn btn-secondary" @click="getPersonalProducts()">See My Listings</button>
+      <button class="btn btn-success" @click="getProducts()">See All Products</button>
+      <button class="btn btn-warning" @click="getAvailableProducts()">See Available Products</button>
+      <button class="btn btn-primary" @click="getProductsTakenByMe()">See Products I've Taken</button>
+    </div>
     <flash message=""></flash>
     <div class="col-md-12 row justify-content-center">
       <div class="card col-md-5 justify-content-center" v-for="product in productsInfo"  v-bind:key="product.id">
