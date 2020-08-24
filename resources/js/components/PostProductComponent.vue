@@ -17,7 +17,7 @@
               <!-- Description Text Input -->
               <textarea class="form-control" id="description" name="description" v-model="fields.description" rows="5" required></textarea>
 
-              <label for="image">Image</label>
+              <label for="image">Image URL</label>
               <!-- Image Text Input -->
               <textarea class="form-control" id="image" name="image" v-model="fields.image" rows="1"></textarea>
                             

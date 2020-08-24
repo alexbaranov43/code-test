@@ -18,8 +18,8 @@
                     <br><br>
                     @if (Auth::user()->is_subscribed)
                     <div style="padding-bottom: 20px">
-                        <button class="btn btn-info" onclick="showForm()">Post A Product</button>
-                        <button class="btn btn-success" id="view-products" onclick="showProducts()" style="display: none">View Products</button>
+                        <button class="btn btn-info" id="post-product-button" onclick="showForm()">Post A Product</button>
+                        <button class="btn btn-success" id="view-products" onclick="showForm()" style="display: none">View Products</button>
                     </div>
                     @endif
                     <div id="post-product" style="display: none;">
@@ -45,15 +45,24 @@ $.ajaxSetup({
         }
     });
 
+
+var renderComponent = true;
+
 function showForm() {
   var postProduct = document.getElementById("post-product");
-  var viewProducts = document.getElementById("product-list");
+  var postProductButton = document.getElementById("post-product-button");
+  var productList = document.getElementById("product-list")
+  var viewProducts = document.getElementById("view-products");
   if (postProduct.style.display === "none") {
     postProduct.style.display = "block";
-    viewProducts.style.display = "none";
-  } else {
-    postProduct.style.display = "none";
     viewProducts.style.display = "block";
+    productList.style.display = "none"
+    postProductButton.style.display = "none";
+  } else if (postProduct.style.display === "block") {
+    postProduct.style.display = "none";
+    viewProducts.style.display = "none";
+    postProductButton.style.display = "block";
+    productList.style.display = "block"
   }
 }
 

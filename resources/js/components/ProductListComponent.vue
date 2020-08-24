@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <button v-if="this.fullIndex" @click="getPersonalProducts()">See Personal Products</button>
-    <button v-if="this.fullIndex == false" @click="getProducts()">See All Products</button>
+    <button class="btn btn-info" v-if="this.fullIndex" @click="getPersonalProducts()">See Personal Products</button>
+    <button class="btn btn-info" v-if="this.fullIndex == false" @click="getProducts()">See All Products</button>
     <flash message=""></flash>
     <div class="col-md-12 row justify-content-center">
       <div class="card col-md-5 justify-content-center" v-for="product in productsInfo"  v-bind:key="product.id">
@@ -38,9 +38,9 @@
                       <!-- Description Text Input -->
                       <textarea class="form-control" id="description" name="description" v-model="productInfo.description" :placeholder="product.description" rows="5" required></textarea>
 
-                      <label for="image">Image</label>
+                      <label for="image">Image URL</label>
                       <!-- Image Text Input -->
-                      <textarea class="form-control" id="image" name="image" v-model="productInfo.image" :placeholder="product.image"rows="1"></textarea>
+                      <textarea class="form-control" id="image" name="image" v-model="productInfo.image" :placeholder="product.image" rows="1"></textarea>
                                     
                       <label for="price">Price</label>
                       <!-- Price Text Input -->
@@ -72,6 +72,7 @@ export default {
       products: {},
       productsInfo: {},
       fullIndex: true,
+      renderComponent: true,
         }
       },
   mounted() {
@@ -79,6 +80,15 @@ export default {
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
   },
   methods: {
+      forceRerender() {
+        // Remove my-component from the DOM
+        this.renderComponent = false;
+
+        this.$nextTick(() => {
+          // Add the component back in
+          this.renderComponent = true;
+        });
+    },
     getProducts() {
       let url = '/products/index';
       axios.get(url).then((response)=>{
@@ -93,6 +103,7 @@ export default {
             this.errors = error.response.data.errors || {};
           }
         });
+        // this.reloadAllProducts();
     },
     getPersonalProducts() {
       let url = '/products/index/personal';
@@ -107,7 +118,9 @@ export default {
               flash('Error in loading products', 'failure')
               this.errors = error.response.data.errors || {};
             }
-          });
+          }
+        );
+        // this.reloadPersonalProducts();
     },
     updateProduct(product_id) {
       console.log(this.productInfo);
@@ -159,7 +172,17 @@ export default {
               this.errors = error.response.data.errors || {};
             }
       })
-    }
+    },
+    reloadAllProducts() {
+      setTimeout(() => {
+        this.getProducts()
+      }, 10000);
+    },
+    reloadPersonalProducts() {
+      setTimeout(()=>{
+        this.getPersonalProducts()
+        }, 10000);
+      },
   },
   created() {
     this.getProducts();

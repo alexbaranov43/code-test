@@ -2162,7 +2162,8 @@ __webpack_require__.r(__webpack_exports__);
       loaded: true,
       products: {},
       productsInfo: {},
-      fullIndex: true
+      fullIndex: true,
+      renderComponent: true
     };
   },
   mounted: function mounted() {
@@ -2171,32 +2172,24 @@ __webpack_require__.r(__webpack_exports__);
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   },
   methods: {
-    getProducts: function getProducts() {
+    forceRerender: function forceRerender() {
       var _this = this;
+
+      // Remove my-component from the DOM
+      this.renderComponent = false;
+      this.$nextTick(function () {
+        // Add the component back in
+        _this.renderComponent = true;
+      });
+    },
+    getProducts: function getProducts() {
+      var _this2 = this;
 
       var url = '/products/index';
       axios.get(url).then(function (response) {
-        _this.fullIndex = true;
-        _this.products = response.data;
-        _this.productsInfo = response.data.data;
-      })["catch"](function (error) {
-        _this.loaded = true;
-
-        if (error.response.status === 422) {
-          // flash message failure
-          flash('Error in loading products', 'failure');
-          _this.errors = error.response.data.errors || {};
-        }
-      });
-    },
-    getPersonalProducts: function getPersonalProducts() {
-      var _this2 = this;
-
-      var url = '/products/index/personal';
-      axios.get(url).then(function (response) {
+        _this2.fullIndex = true;
         _this2.products = response.data;
         _this2.productsInfo = response.data.data;
-        _this2.fullIndex = false;
       })["catch"](function (error) {
         _this2.loaded = true;
 
@@ -2205,10 +2198,28 @@ __webpack_require__.r(__webpack_exports__);
           flash('Error in loading products', 'failure');
           _this2.errors = error.response.data.errors || {};
         }
-      });
+      }); // this.reloadAllProducts();
+    },
+    getPersonalProducts: function getPersonalProducts() {
+      var _this3 = this;
+
+      var url = '/products/index/personal';
+      axios.get(url).then(function (response) {
+        _this3.products = response.data;
+        _this3.productsInfo = response.data.data;
+        _this3.fullIndex = false;
+      })["catch"](function (error) {
+        _this3.loaded = true;
+
+        if (error.response.status === 422) {
+          // flash message failure
+          flash('Error in loading products', 'failure');
+          _this3.errors = error.response.data.errors || {};
+        }
+      }); // this.reloadPersonalProducts();
     },
     updateProduct: function updateProduct(product_id) {
-      var _this3 = this;
+      var _this4 = this;
 
       console.log(this.productInfo);
 
@@ -2224,48 +2235,62 @@ __webpack_require__.r(__webpack_exports__);
         axios.patch("/products/".concat(product_id, "/update"), this.productInfo).then(function (response) {
           console.log(response); // this.fields = {}; //Clear input fields.
 
-          _this3.loaded = true;
-          _this3.success = true;
+          _this4.loaded = true;
+          _this4.success = true;
 
-          if (_this3.fullIndex) {
-            _this3.getProducts();
+          if (_this4.fullIndex) {
+            _this4.getProducts();
           } else {
-            _this3.getPersonalProducts();
+            _this4.getPersonalProducts();
           } // Flash message success
 
 
           flash('Product updated successfully.', 'success');
         })["catch"](function (error) {
           console.log(error);
-          _this3.loaded = true;
+          _this4.loaded = true;
 
           if (error.response.status === 422) {
             // flash message failure
             flash('Error in updating your product', 'failure');
-            _this3.errors = error.response.data.errors || {};
+            _this4.errors = error.response.data.errors || {};
           }
         });
       }
     },
     deleteProduct: function deleteProduct(product_id) {
-      var _this4 = this;
+      var _this5 = this;
 
       var url = "products/".concat(product_id, "/destroy");
       axios["delete"](url).then(function (response) {
-        if (_this4.fullIndex) {
-          _this4.getProducts();
+        if (_this5.fullIndex) {
+          _this5.getProducts();
         } else {
-          _this4.getPersonalProducts();
+          _this5.getPersonalProducts();
         }
       })["catch"](function (error) {
-        _this4.loaded = true;
+        _this5.loaded = true;
 
         if (error.response.status === 422) {
           // flash message failure
           flash('Error in loading products', 'failure');
-          _this4.errors = error.response.data.errors || {};
+          _this5.errors = error.response.data.errors || {};
         }
       });
+    },
+    reloadAllProducts: function reloadAllProducts() {
+      var _this6 = this;
+
+      setTimeout(function () {
+        _this6.getProducts();
+      }, 10000);
+    },
+    reloadPersonalProducts: function reloadPersonalProducts() {
+      var _this7 = this;
+
+      setTimeout(function () {
+        _this7.getPersonalProducts();
+      }, 10000);
     }
   },
   created: function created() {
@@ -38691,7 +38716,7 @@ var render = function() {
               }
             }),
             _vm._v(" "),
-            _c("label", { attrs: { for: "image" } }, [_vm._v("Image")]),
+            _c("label", { attrs: { for: "image" } }, [_vm._v("Image URL")]),
             _vm._v(" "),
             _c("textarea", {
               directives: [
@@ -38781,6 +38806,7 @@ var render = function() {
         ? _c(
             "button",
             {
+              staticClass: "btn btn-info",
               on: {
                 click: function($event) {
                   return _vm.getPersonalProducts()
@@ -38795,6 +38821,7 @@ var render = function() {
         ? _c(
             "button",
             {
+              staticClass: "btn btn-info",
               on: {
                 click: function($event) {
                   return _vm.getProducts()
@@ -39012,7 +39039,7 @@ var render = function() {
                                 }),
                                 _vm._v(" "),
                                 _c("label", { attrs: { for: "image" } }, [
-                                  _vm._v("Image")
+                                  _vm._v("Image URL")
                                 ]),
                                 _vm._v(" "),
                                 _c("textarea", {

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductResourceCollection;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -88,9 +89,24 @@ class ProductController extends Controller
     {
         //
         // unauthorized user if user id is invalid
-        if (!Auth::user()->is_subscribed) {
+        if (!Auth::user()->is_subscribed && (is_null(Auth::user()->id) || Auth::user()->id == '')) {
             abort(401);
         }
+
+        $rules = [
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|integer'
+        ];
+
+        $messages = [
+            'name.required' => 'Product must have a name',
+            'description.required' => 'Product must have a description.',
+            'price.required' => 'Product must have a price.'
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages
+        );
 
         $product = new Product([
             'user_id' => $request->get('user_id'),
@@ -127,7 +143,6 @@ class ProductController extends Controller
     public function edit($id)
     {
         //
-        return view('edit');
     }
 
     /**
@@ -143,6 +158,20 @@ class ProductController extends Controller
         // unauthorized user if user id is invalid
         if (!Auth::user()->is_subscribed && Auth::user()->id != $product->user_id) {
             abort(401);
+
+        $rules = [
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|integer'
+        ];
+
+        $messages = [
+            'name.required' => 'Product must have a name',
+            'description.required' => 'Product must have a description.',
+            'price.required' => 'Product must have a price.'
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
         }
         $product->name = $request->get('name');
         $product->description = $request->get('description');
