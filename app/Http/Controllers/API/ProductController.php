@@ -43,6 +43,27 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a listing of the available resources.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function availableIndex()
+    {
+        $products = Product::select('products.*', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"))
+        ->join('users', 'users.id', '=', 'products.user_id')
+        ->where('products.is_available', '=', true)
+        ->get();
+
+        foreach ($products as $product) {
+            if (!$product->image) {
+                $product->image = 'https://image.shutterstock.com/image-vector/no-user-profile-picture-hand-260nw-99335579.jpg';
+            }
+        }
+
+        return new ProductResourceCollection($products);
+    }
+
+    /**
      * Display a listing of the resource owned by user.
      *
      * @return \Illuminate\Http\Response
@@ -52,6 +73,33 @@ class ProductController extends Controller
         $products = Product::select('products.*', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"))
         ->join('users', 'users.id', '=', 'products.user_id')
         ->where('users.id', '=', Auth::user()->id)
+        ->get();
+
+        foreach ($products as $product) {
+            if (!$product->image) {
+                $product->image = 'https://image.shutterstock.com/image-vector/no-user-profile-picture-hand-260nw-99335579.jpg';
+            }
+
+            if ($product->user_id == Auth::user()->id) {
+                $product->can_edit = true;
+            } else {
+                $product->can_edit = false;
+            }
+        }
+
+        return new ProductResourceCollection($products);
+    }
+
+    /**
+     * Display a listing of the resource taken by user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function takenByMeIndex()
+    {
+        $products = Product::select('products.*', DB::raw("CONCAT(users.first_name, ' ', users.last_name) AS user_name"))
+        ->join('users', 'users.id', '=', 'products.user_id')
+        ->where('products.taken_by', '=', Auth::user()->id)
         ->get();
 
         foreach ($products as $product) {
@@ -185,6 +233,27 @@ class ProductController extends Controller
     
     }
 
+
+    /**
+     * Update the specified resource in storage to make unavailable.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function takeProduct(Product $product)
+    {
+        //
+        if (!Auth::user()->is_subscribed) {
+            abort('401');
+        }
+
+        $product->is_available = false;
+        $product->taken_by = Auth::user()->id;
+        $product->save();
+
+        return new ProductResource($product);
+    }
     /**
      * Remove the specified resource from storage.
      *

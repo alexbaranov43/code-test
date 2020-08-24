@@ -2154,6 +2154,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2200,16 +2201,16 @@ __webpack_require__.r(__webpack_exports__);
           flash('Error in loading products', 'failure');
           _this2.errors = error.response.data.errors || {};
         }
-      }); // this.reloadAllProducts();
+      });
     },
-    getPersonalProducts: function getPersonalProducts() {
+    getAvailableProducts: function getAvailableProducts() {
       var _this3 = this;
 
-      var url = '/products/index/personal';
+      var url = '/products/index/available';
       axios.get(url).then(function (response) {
+        _this3.fullIndex = false;
         _this3.products = response.data;
         _this3.productsInfo = response.data.data;
-        _this3.fullIndex = false;
       })["catch"](function (error) {
         _this3.loaded = true;
 
@@ -2218,10 +2219,46 @@ __webpack_require__.r(__webpack_exports__);
           flash('Error in loading products', 'failure');
           _this3.errors = error.response.data.errors || {};
         }
-      }); // this.reloadPersonalProducts();
+      });
+    },
+    getPersonalProducts: function getPersonalProducts() {
+      var _this4 = this;
+
+      var url = '/products/index/personal';
+      axios.get(url).then(function (response) {
+        _this4.products = response.data;
+        _this4.productsInfo = response.data.data;
+        _this4.fullIndex = false;
+      })["catch"](function (error) {
+        _this4.loaded = true;
+
+        if (error.response.status === 422) {
+          // flash message failure
+          flash('Error in loading products', 'failure');
+          _this4.errors = error.response.data.errors || {};
+        }
+      });
+    },
+    getProductsTakenByMe: function getProductsTakenByMe() {
+      var _this5 = this;
+
+      var url = '/products/index/takenByMe';
+      axios.get(url).then(function (response) {
+        _this5.products = response.data;
+        _this5.productsInfo = response.data.data;
+        _this5.fullIndex = false;
+      })["catch"](function (error) {
+        _this5.loaded = true;
+
+        if (error.response.status === 422) {
+          // flash message failure
+          flash('Error in loading products', 'failure');
+          _this5.errors = error.response.data.errors || {};
+        }
+      });
     },
     updateProduct: function updateProduct(product_id) {
-      var _this4 = this;
+      var _this6 = this;
 
       console.log(this.productInfo);
 
@@ -2237,65 +2274,62 @@ __webpack_require__.r(__webpack_exports__);
         axios.patch("/products/".concat(product_id, "/update"), this.productInfo).then(function (response) {
           console.log(response); // this.fields = {}; //Clear input fields.
 
-          _this4.loaded = true;
-          _this4.success = true;
+          _this6.loaded = true;
+          _this6.success = true;
 
-          if (_this4.fullIndex) {
-            _this4.getProducts();
+          if (_this6.fullIndex) {
+            _this6.getProducts();
           } else {
-            _this4.getPersonalProducts();
+            _this6.getPersonalProducts();
           } // Flash message success
 
 
           flash('Product updated successfully.', 'success');
         })["catch"](function (error) {
           console.log(error);
-          _this4.loaded = true;
+          _this6.loaded = true;
 
           if (error.response.status === 422) {
             // flash message failure
             flash('Error in updating your product', 'failure');
-            _this4.errors = error.response.data.errors || {};
+            _this6.errors = error.response.data.errors || {};
           }
         });
       }
     },
-    deleteProduct: function deleteProduct(product_id) {
-      var _this5 = this;
+    takeProduct: function takeProduct(product_id) {
+      var _this7 = this;
 
-      var url = "products/".concat(product_id, "/destroy");
-      axios["delete"](url).then(function (response) {
-        if (_this5.fullIndex) {
-          _this5.getProducts();
-        } else {
-          _this5.getPersonalProducts();
-        }
+      var url = "products/".concat(product_id, "/take");
+      axios.patch(url).then(function (response) {
+        _this7.getProductsTakenByMe();
       })["catch"](function (error) {
-        _this5.loaded = true;
+        _this7.loaded = true;
 
         if (error.response.status === 422) {
           // flash message failure
           flash('Error in loading products', 'failure');
-          _this5.errors = error.response.data.errors || {};
+          _this7.errors = error.response.data.errors || {};
         }
       });
     },
-    reloadAllProducts: function reloadAllProducts() {
-      var _this6 = this;
+    deleteProduct: function deleteProduct(product_id) {
+      var _this8 = this;
 
-      setTimeout(function () {
-        _this6.getProducts();
-      }, 10000);
-    },
-    reloadPersonalProducts: function reloadPersonalProducts() {
-      var _this7 = this;
+      var url = "products/".concat(product_id, "/destroy");
+      axios["delete"](url).then(function (response) {
+        _this8.getProducts();
+      })["catch"](function (error) {
+        _this8.loaded = true;
 
-      setTimeout(function () {
-        _this7.getPersonalProducts();
-      }, 10000);
+        if (error.response.status === 422) {
+          // flash message failure
+          flash('Error in loading products', 'failure');
+          _this8.errors = error.response.data.errors || {};
+        }
+      });
     }
-  },
-  created: function created() {}
+  }
 });
 
 /***/ }),
@@ -38847,7 +38881,7 @@ var render = function() {
           staticClass: "btn btn-info",
           on: {
             click: function($event) {
-              return _vm.getTakenProducts()
+              return _vm.getProductsTakenByMe()
             }
           }
         },
@@ -38876,6 +38910,22 @@ var render = function() {
               _c("p", [_vm._v("$" + _vm._s(product.price))]),
               _vm._v(" "),
               _c("p", [_vm._v("Posted By: " + _vm._s(product.user_name))]),
+              _vm._v(" "),
+              product.is_available && !product.can_edit
+                ? _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.takeProduct(product.id)
+                        }
+                      }
+                    },
+                    [_vm._v("Take")]
+                  )
+                : _vm._e(),
               _vm._v(" "),
               product.can_edit
                 ? _c(

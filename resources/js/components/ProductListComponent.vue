@@ -3,7 +3,7 @@
     <button class="btn btn-info" @click="getPersonalProducts()">See Personal Products</button>
     <button class="btn btn-info" @click="getProducts()">See All Products</button>
     <button class="btn btn-info" @click="getAvailableProducts()">See Available Products</button>
-    <button class="btn btn-info" @click="getTakenProducts()">See Products I've Taken</button>
+    <button class="btn btn-info" @click="getProductsTakenByMe()">See Products I've Taken</button>
     <flash message=""></flash>
     <div class="col-md-12 row justify-content-center">
       <div class="card col-md-5 justify-content-center" v-for="product in productsInfo"  v-bind:key="product.id">
@@ -13,6 +13,7 @@
         <p>{{product.description}}</p>
         <p>${{product.price}}</p>
         <p>Posted By: {{product.user_name}}</p>
+        <button v-if="product.is_available && !product.can_edit" type="button" class="btn btn-success" @click="takeProduct(product.id)">Take</button>
         <button v-if="product.can_edit" type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#modal' + product.id">Update</button>
         <button v-if="product.can_edit" class="btn btn-danger" @click="deleteProduct(product.id)">Delete</button>
 
@@ -105,7 +106,21 @@ export default {
             this.errors = error.response.data.errors || {};
           }
         });
-        // this.reloadAllProducts();
+    },
+    getAvailableProducts() {
+      let url = '/products/index/available';
+      axios.get(url).then((response)=>{
+        this.fullIndex = false;
+        this.products = response.data
+        this.productsInfo = response.data.data
+      }).catch(error => {
+          this.loaded = true;
+          if (error.response.status === 422) {
+            // flash message failure
+            flash('Error in loading products', 'failure')
+            this.errors = error.response.data.errors || {};
+          }
+        });
     },
     getPersonalProducts() {
       let url = '/products/index/personal';
@@ -122,7 +137,22 @@ export default {
             }
           }
         );
-        // this.reloadPersonalProducts();
+    },
+    getProductsTakenByMe() {
+      let url = '/products/index/takenByMe';
+        axios.get(url).then((response)=>{
+          this.products = response.data
+          this.productsInfo = response.data.data
+          this.fullIndex = false
+        }).catch(error => {
+            this.loaded = true;
+            if (error.response.status === 422) {
+              // flash message failure
+              flash('Error in loading products', 'failure')
+              this.errors = error.response.data.errors || {};
+            }
+          }
+        );
     },
     updateProduct(product_id) {
       console.log(this.productInfo);
@@ -158,14 +188,23 @@ export default {
               });
         }
     },
+    takeProduct(product_id) {
+      let url = `products/${product_id}/take`;
+      axios.patch(url).then((response)=> {
+        this.getProductsTakenByMe();
+      }).catch(error=>{
+            this.loaded = true;
+            if (error.response.status === 422) {
+              // flash message failure
+              flash('Error in loading products', 'failure')
+              this.errors = error.response.data.errors || {};
+        }
+      })      
+    },
     deleteProduct(product_id) {
       let url = `products/${product_id}/destroy`;
       axios.delete(url).then((response)=>{
-        if(this.fullIndex) {
           this.getProducts();
-        } else {
-          this.getPersonalProducts();
-        }
       }).catch(error=> {
             this.loaded = true;
             if (error.response.status === 422) {
@@ -175,18 +214,6 @@ export default {
             }
       })
     },
-    reloadAllProducts() {
-      setTimeout(() => {
-        this.getProducts()
-      }, 10000);
-    },
-    reloadPersonalProducts() {
-      setTimeout(()=>{
-        this.getPersonalProducts()
-        }, 10000);
-      },
   },
-  created() {
-  }
 }
 </script>
